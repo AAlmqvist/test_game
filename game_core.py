@@ -34,7 +34,7 @@ def on_draw():
     test_label.draw()
 
     if help_draw:
-        help_label.text = 'Red blob: WASD\nGreen blob: SPACE to jump and O-P to move sideways'
+        help_label.text = 'Red blob: WASD\nGreen blob: SPACE to jump and O-P to move sideways\nBACKSPACE: reset game'
         help_label.font_size = window.height//30
         help_label.width = window.width//1.5
         help_label.height = window.height//1.5
@@ -151,7 +151,7 @@ def move_objects(dt):
 
         for m in movers:
             m.move(m)
-    
+
     w, w2, h2 = window.width, window.width//2, window.height//2
 
     for m in movers:
@@ -164,7 +164,7 @@ def move_objects(dt):
             m.sprite.rotation = -m.r * 360
 
     old_movers = movers
-    movers = [m for m in movers if m.life > 0]
+    movers = [m for m in old_movers if m.life > 0]
 
     if key(ESCAPE):
         pyglet.app.exit()

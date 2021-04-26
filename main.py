@@ -13,6 +13,7 @@ jumper_image = image('jump_guy.png')
 badmouse = image('badmouse.png')
 brick_image = image('brick.png')
 spikes_image = image('spikes.png')
+untargetable_image = image('untargetable.png')
 
 # Defining the movement of normal player
 def player(p):
@@ -61,6 +62,13 @@ def player(p):
 
     p.dx, p.dy = 0, 0
     p.time += time_min
+
+    if p.untargetable:
+        p.time_hit += time_min
+        if p.time_hit > 1:
+            p.untargetable = False
+            p.image = player_image
+
 
 # defining the movement of a character affected by gravity
 def jumper(l):
@@ -117,9 +125,21 @@ def jumper(l):
     l.x += l.dx
     l.ground_below = solid_ground
     l.dx = 0
+    if l.untargetable:
+        l.time_hit += time_min
+        if l.time_hit > 1:
+            l.untargetable = False
+            l.image = jumper_image
 
 def spikes(sp):
-
+    for o in group(player, jumper):
+        if not o.untargetable:
+            if o.y > sp.y:
+                if abs(o.x-sp.x) < 15/450 + o.sx and abs(o.y-sp.y) < 7/300 + o.sy:
+                    o.life -= 1
+                    o.image = untargetable_image
+                    o.untargetable = True
+                    o.time_hit = 0
     sp.time += time_min
 
 def createBorders():
@@ -150,10 +170,10 @@ def level(ind):
             createSpikes(-1 + (i+0.5)*(30/450), -1 + (0.1+12/300) )
 
 def createPlayer(size=0.1, x=0, y=0):
-    createMovingObject(player, player_image, size=size, x=x , y=y, life=2)
+    createMovingObject(player, player_image, size=size, x=x , y=y, life=2, untargetable=False)
 
 def createJumper(size=0.1, x=0, y=0):
-    createMovingObject(jumper, jumper_image, size = size, x=x, y=y, ground_below = False, life=2)
+    createMovingObject(jumper, jumper_image, size = size, x=x, y=y, ground_below=False, life=2, untargetable=False)
 
 def createSpikes(x=0, y=0):
     createMovingObject(spikes, spikes_image, 27/900, x=x, y=y)
